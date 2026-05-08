@@ -6,9 +6,11 @@ Inspired by Zmail, built for the future.
 
 ## ✨ Features
 - **Zero Configuration**: Automatically detects server settings for major providers (Gmail, Outlook, 163, QQ).
+- **Dual Protocol Support**: Smart switching between **IMAP** (modern) and **POP3** (legacy).
+- **Server-side Search**: Blazing fast search using IMAP server-side filtering.
+- **Folder Management**: Access and manage folders like Sent, Drafts, and Junk.
+- **Message Status**: Mark emails as read/unread directly on the server.
 - **Modern Python**: Full type hinting, f-strings, and Python 3.7+ support.
-- **Robust Parsing**: Uses modern `email.message.EmailMessage` for reliable MIME handling.
-- **Clean API**: Intuitive methods like `push` and `fetch`.
 
 ## 🚀 Quick Start
 
