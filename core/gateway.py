@@ -265,3 +265,21 @@ class AirGateway:
                 return True
         except:
             return False
+
+    def mark_as_read(self, uid: str, folder: str = 'INBOX'):
+        """Mark email as seen (IMAP only)."""
+        if not self.imap_host:
+            logging.warning("mark_as_read requires IMAP support.")
+            return
+        with self._get_imap_conn() as server:
+            server.select(folder)
+            server.store(uid, '+FLAGS', '\\Seen')
+
+    def mark_as_unread(self, uid: str, folder: str = 'INBOX'):
+        """Mark email as unseen (IMAP only)."""
+        if not self.imap_host:
+            logging.warning("mark_as_unread requires IMAP support.")
+            return
+        with self._get_imap_conn() as server:
+            server.select(folder)
+            server.store(uid, '-FLAGS', '\\Seen')
