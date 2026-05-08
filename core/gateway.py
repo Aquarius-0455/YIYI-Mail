@@ -8,10 +8,26 @@ from .parser import AirParser
 
 # Predefined configurations for common providers
 SERVER_PRESETS = {
-    'gmail.com': {'smtp_host': 'smtp.gmail.com', 'pop3_host': 'pop.gmail.com', 'smtp_port': 465, 'pop3_port': 995},
-    'outlook.com': {'smtp_host': 'smtp.office365.com', 'pop3_host': 'outlook.office365.com', 'smtp_port': 587, 'pop3_port': 995},
-    '163.com': {'smtp_host': 'smtp.163.com', 'pop3_host': 'pop.163.com', 'smtp_port': 465, 'pop3_port': 995},
-    'qq.com': {'smtp_host': 'smtp.qq.com', 'pop3_host': 'pop.qq.com', 'smtp_port': 465, 'pop3_port': 995},
+    'gmail.com': {
+        'smtp_host': 'smtp.gmail.com', 'smtp_port': 465,
+        'pop3_host': 'pop.gmail.com', 'pop3_port': 995,
+        'imap_host': 'imap.gmail.com', 'imap_port': 993
+    },
+    'outlook.com': {
+        'smtp_host': 'smtp.office365.com', 'smtp_port': 587,
+        'pop3_host': 'outlook.office365.com', 'pop3_port': 995,
+        'imap_host': 'outlook.office365.com', 'imap_port': 993
+    },
+    '163.com': {
+        'smtp_host': 'smtp.163.com', 'smtp_port': 465,
+        'pop3_host': 'pop.163.com', 'pop3_port': 995,
+        'imap_host': 'imap.163.com', 'imap_port': 993
+    },
+    'qq.com': {
+        'smtp_host': 'smtp.qq.com', 'smtp_port': 465,
+        'pop3_host': 'pop.qq.com', 'pop3_port': 995,
+        'imap_host': 'imap.qq.com', 'imap_port': 993
+    },
 }
 
 class AirGateway:
@@ -19,7 +35,8 @@ class AirGateway:
     Main entry point for AirMail. Handles connections to mail servers.
     """
     def __init__(self, user: str, password: str, smtp_host: str = None, pop3_host: str = None, 
-                 smtp_port: int = None, pop3_port: int = None, use_ssl: bool = True):
+                 imap_host: str = None, smtp_port: int = None, pop3_port: int = None, 
+                 imap_port: int = None, use_ssl: bool = True):
         self.user = user
         self.password = password
         
@@ -29,8 +46,11 @@ class AirGateway:
         
         self.smtp_host = smtp_host or preset.get('smtp_host')
         self.pop3_host = pop3_host or preset.get('pop3_host')
+        self.imap_host = imap_host or preset.get('imap_host')
+        
         self.smtp_port = smtp_port or preset.get('smtp_port', 465 if use_ssl else 25)
         self.pop3_port = pop3_port or preset.get('pop3_port', 995 if use_ssl else 110)
+        self.imap_port = imap_port or preset.get('imap_port', 993 if use_ssl else 143)
         self.use_ssl = use_ssl
 
     def _get_smtp_conn(self):
