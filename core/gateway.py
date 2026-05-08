@@ -115,7 +115,23 @@ class AirGateway:
             logging.info(f"Email sent successfully to {recipients}")
 
     def fetch_latest(self) -> Dict[str, Any]:
-        """Get the most recent email from the inbox."""
+        """Get the most recent email. Tries IMAP first, falls back to POP3."""
+        if self.imap_host:
+            try:
+                with self._get_imap_conn() as server:
+                    server.select('INBOX')
+                    resp, data = server.search(None, 'ALL')
+                    ids = data[0].split()
+                    if not ids:
+                        return {}
+                    latest_id = ids[-1]
+                    resp, data = server.fetch(latest_id, '(RFC822)')
+                    msg_bytes = data[0][1]
+                    mime_msg = message_from_bytes(msg_bytes)
+                    return AirParser.decompose(mime_msg)
+            except Exception as e:
+                logging.warning(f"IMAP fetch_latest failed, falling back to POP3: {e}")
+        
         with self._get_pop3_conn() as server:
             msg_count = len(server.list()[1])
             if msg_count == 0:
@@ -128,7 +144,29 @@ class AirGateway:
             return AirParser.decompose(mime_msg)
 
     def fetch_mails(self, start: int = 1, end: int = None) -> List[Dict[str, Any]]:
-        """Fetch a range of emails."""
+        """Fetch a range of emails. Tries IMAP first, falls back to POP3."""
+        if self.imap_host:
+            try:
+                results = []
+                with self._get_imap_conn() as server:
+                    server.select('INBOX')
+                    resp, data = server.search(None, 'ALL')
+                    ids = data[0].split()
+                    if not ids:
+                        return []
+                    
+                    total = len(ids)
+                    end = end or total
+                    # IMAP ids are 1-based, we use the list index
+                    for i in range(max(1, start), min(end, total) + 1):
+                        msg_id = ids[i-1]
+                        resp, msg_data = server.fetch(msg_id, '(RFC822)')
+                        mime_msg = message_from_bytes(msg_data[0][1])
+                        results.append(AirParser.decompose(mime_msg))
+                return results
+            except Exception as e:
+                logging.warning(f"IMAP fetch_mails failed, falling back to POP3: {e}")
+
         results = []
         with self._get_pop3_conn() as server:
             total = len(server.list()[1])
