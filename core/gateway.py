@@ -194,3 +194,74 @@ class AirGateway:
                     name = parts[-1].strip('"')
                     result.append(name)
             return result
+
+    def info(self) -> Dict[str, Any]:
+        """Get mailbox statistics (count, total size)."""
+        with self._get_pop3_conn() as server:
+            count, size = server.stat()
+            return {'count': count, 'size_bytes': size}
+
+    def delete(self, index: int):
+        """Mark an email for deletion."""
+        with self._get_pop3_conn() as server:
+            server.dele(index)
+            logging.info(f"Email at index {index} marked for deletion.")
+
+    def search(self, subject: str = None, sender: str = None, unseen: bool = False) -> List[Dict[str, Any]]:
+        """
+        Search for emails matching criteria. 
+        Uses IMAP server-side search if available, otherwise falls back to local filtering.
+        """
+        if self.imap_host:
+            try:
+                with self._get_imap_conn() as server:
+                    server.select('INBOX')
+                    criteria = []
+                    if subject: criteria.append(f'SUBJECT "{subject}"')
+                    if sender: criteria.append(f'FROM "{sender}"')
+                    if unseen: criteria.append('UNSEEN')
+                    
+                    search_str = ' '.join(criteria) if criteria else 'ALL'
+                    resp, data = server.search(None, search_str)
+                    
+                    results = []
+                    for msg_id in data[0].split():
+                        resp, msg_data = server.fetch(msg_id, '(RFC822)')
+                        mime_msg = message_from_bytes(msg_data[0][1])
+                        results.append(AirParser.decompose(mime_msg))
+                    return results
+            except Exception as e:
+                logging.warning(f"IMAP search failed, falling back to POP3: {e}")
+
+        return self._legacy_pop3_search(subject, sender)
+
+    def _legacy_pop3_search(self, subject: str = None, sender: str = None) -> List[Dict[str, Any]]:
+        """Legacy local filtering for POP3."""
+        logging.info("Searching inbox (this may take time for large mailboxes)...")
+        all_mails = self.fetch_mails()
+        filtered = []
+        for mail in all_mails:
+            match = True
+            if subject and subject.lower() not in (mail.get('subject') or '').lower():
+                match = False
+            if sender and sender.lower() not in (mail.get('from') or '').lower():
+                match = False
+            if match:
+                filtered.append(mail)
+        return filtered
+
+    def smtp_able(self) -> bool:
+        """Verify SMTP connection and login."""
+        try:
+            with self._get_smtp_conn():
+                return True
+        except:
+            return False
+
+    def pop_able(self) -> bool:
+        """Verify POP3 connection and login."""
+        try:
+            with self._get_pop3_conn():
+                return True
+        except:
+            return False
