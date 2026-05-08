@@ -114,12 +114,12 @@ class AirGateway:
             server.send_message(msg)
             logging.info(f"Email sent successfully to {recipients}")
 
-    def fetch_latest(self) -> Dict[str, Any]:
+    def fetch_latest(self, folder: str = 'INBOX') -> Dict[str, Any]:
         """Get the most recent email. Tries IMAP first, falls back to POP3."""
         if self.imap_host:
             try:
                 with self._get_imap_conn() as server:
-                    server.select('INBOX')
+                    server.select(folder)
                     resp, data = server.search(None, 'ALL')
                     ids = data[0].split()
                     if not ids:
@@ -143,13 +143,13 @@ class AirGateway:
             mime_msg = message_from_bytes(msg_bytes)
             return AirParser.decompose(mime_msg)
 
-    def fetch_mails(self, start: int = 1, end: int = None) -> List[Dict[str, Any]]:
+    def fetch_mails(self, start: int = 1, end: int = None, folder: str = 'INBOX') -> List[Dict[str, Any]]:
         """Fetch a range of emails. Tries IMAP first, falls back to POP3."""
         if self.imap_host:
             try:
                 results = []
                 with self._get_imap_conn() as server:
-                    server.select('INBOX')
+                    server.select(folder)
                     resp, data = server.search(None, 'ALL')
                     ids = data[0].split()
                     if not ids:
