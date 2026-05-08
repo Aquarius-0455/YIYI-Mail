@@ -1,5 +1,6 @@
 import smtplib
 import poplib
+import imaplib
 import logging
 from typing import Optional, Tuple, Dict, Any, List, Union
 from email import message_from_bytes
@@ -77,14 +78,29 @@ class AirGateway:
         except Exception as e:
             raise AuthenticationError(f"POP3 Login failed for {self.user}: {str(e)}")
 
+    def _get_imap_conn(self):
+        try:
+            if self.use_ssl:
+                conn = imaplib.IMAP4_SSL(self.imap_host, self.imap_port)
+            else:
+                conn = imaplib.IMAP4(self.imap_host, self.imap_port)
+            conn.login(self.user, self.password)
+            return conn
+        except Exception as e:
+            raise AuthenticationError(f"IMAP Login failed for {self.user}: {str(e)}")
+
     def reachable(self) -> bool:
-        """Check if both SMTP and POP3 are reachable."""
+        """Check if SMTP, POP3 and IMAP (if available) are reachable."""
         try:
             with self._get_smtp_conn() as s:
                 smtp_ok = True
             with self._get_pop3_conn() as p:
                 pop3_ok = True
-            return smtp_ok and pop3_ok
+            imap_ok = True
+            if self.imap_host:
+                with self._get_imap_conn() as i:
+                    imap_ok = True
+            return smtp_ok and pop3_ok and imap_ok
         except:
             return False
 
@@ -122,3 +138,21 @@ class AirGateway:
                 mime_msg = message_from_bytes(b'\n'.join(lines))
                 results.append(AirParser.decompose(mime_msg))
         return results
+
+    def folders(self) -> List[str]:
+        """List all available folders (mailboxes)."""
+        if not self.imap_host:
+            return ['INBOX']
+        with self._get_imap_conn() as server:
+            resp, folder_list = server.list()
+            if resp != 'OK':
+                return []
+            
+            result = []
+            for f in folder_list:
+                line = f.decode()
+                parts = line.split(' "/" ')
+                if len(parts) > 1:
+                    name = parts[-1].strip('"')
+                    result.append(name)
+            return result
