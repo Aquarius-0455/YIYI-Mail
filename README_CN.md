@@ -4,7 +4,7 @@
 
 # YIYIMail 🚀
 
-中文说明 | [English Version](README.md)
+中文说明 | [English Version](https://github.com/Aquarius-0455/YIYI-Mail/blob/master/README.md)
 
 
 YIYIMail 是一个高性能、现代化的 Python 邮件处理库。它旨在替代陈旧的邮件库，提供对 IMAP、POP3 和 SMTP 的完美支持，具备高性能的服务端搜索、优雅的 HTML/CID 解析以及极致的易用性。

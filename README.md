@@ -4,7 +4,7 @@
 
 # YIYIMail 🚀
 
-[中文说明](README_CN.md) | English Version
+[中文说明](https://github.com/Aquarius-0455/YIYI-Mail/blob/master/README_CN.md) | English Version
 
 
 YIYIMail is a high-performance, modern Python library for email processing. It is designed to replace legacy libraries by providing seamless support for IMAP, POP3, and SMTP, featuring high-performance server-side search, elegant HTML/CID parsing, and extreme ease of use.
