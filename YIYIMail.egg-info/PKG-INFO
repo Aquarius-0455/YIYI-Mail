@@ -1,3 +1,19 @@
+Metadata-Version: 2.4
+Name: YIYIMail
+Version: 1.0.1
+Summary: A high-performance, modern Python library for email processing (IMAP/POP3/SMTP).
+Author: Aquarius-0455
+Project-URL: Homepage, https://github.com/Aquarius-0455/YIYI-Mail
+Project-URL: Bug Tracker, https://github.com/Aquarius-0455/YIYI-Mail/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Communications :: Email
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Dynamic: license-file
+
 <p align="center">
   <img src="YIYIMail_logo.png" alt="YIYIMail Logo" width="200">
 </p>
@@ -22,7 +38,8 @@ YIYIMail is a high-performance, modern Python library for email processing. It i
 ## 📦 Installation
 
 ```bash
-pip install YIYIMail
+# Just copy the YIYIMail folder into your project.
+import YIYIMail
 ```
 
 ## 🚀 Quick Start

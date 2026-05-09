@@ -22,8 +22,7 @@ YIYIMail 是一个高性能、现代化的 Python 邮件处理库。它旨在替
 ## 📦 安装
 
 ```bash
-# 直接克隆或复制 YIYIMail 文件夹到您的项目中即可
-import YIYIMail
+pip install YIYIMail
 ```
 
 ## 🚀 快速开始

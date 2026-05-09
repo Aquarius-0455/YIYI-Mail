@@ -1,0 +1,13 @@
+LICENSE
+README.md
+__init__.py
+pyproject.toml
+./__init__.py
+YIYIMail.egg-info/PKG-INFO
+YIYIMail.egg-info/SOURCES.txt
+YIYIMail.egg-info/dependency_links.txt
+YIYIMail.egg-info/top_level.txt
+core/gateway.py
+core/parser.py
+core/structures.py
+core/utils.py
