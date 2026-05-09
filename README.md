@@ -1,61 +1,118 @@
-# AirMail 🛫
+<p align="center">
+  <img src="YIYIMail_logo.png" alt="YIYIMail Logo" width="200">
+</p>
 
-A modernized, lightweight Python library for sending and retrieving emails.
+# YIYIMail 🚀
 
-Inspired by Zmail, built for the future.
+[中文说明](README_CN.md) | English Version
 
-## ✨ Features
-- **Zero Configuration**: Automatically detects server settings for major providers (Gmail, Outlook, 163, QQ).
-- **Dual Protocol Support**: Smart switching between **IMAP** (modern) and **POP3** (legacy).
-- **Server-side Search**: Blazing fast search using IMAP server-side filtering.
-- **Folder Management**: Access and manage folders like Sent, Drafts, and Junk.
-- **Message Status**: Mark emails as read/unread directly on the server.
-- **Modern Python**: Full type hinting, f-strings, and Python 3.7+ support.
+
+YIYIMail is a high-performance, modern Python library for email processing. It is designed to replace legacy libraries by providing seamless support for IMAP, POP3, and SMTP, featuring high-performance server-side search, elegant HTML/CID parsing, and extreme ease of use.
+
+## 🌟 Key Features
+
+- **Modern Protocol Support**: Full support for IMAP, POP3, and SMTP. Auto-identification for personal (Gmail, Outlook, 163, QQ) and Enterprise providers (Tencent, Ali, Netease).
+- **High-Performance Search**: Leverage IMAP server-side search to locate emails instantly. Filter by **Subject, Sender, Date, and Unseen status** with **limit** support.
+- **Superior Compatibility**: Built-in IMAP `ID` command support to pass security checks of providers like 163.com and Tencent.
+- **Smart Folder Matching**: Automatically handles Modified UTF-7 encoding for non-ASCII folder names. Supports direct use of localized names like "已发送" or "Sent Messages".
+- **Elegant Parser**: Automatically handles CID inline images and generates Base64-rendered HTML for perfect offline viewing.
+- **Utility Toolbox**: Built-in `show()` for pretty printing and `save()`/`load()` for local persistence.
+- **Type Safe**: Fully typed with Python 3.7+ type hints.
+
+## 📦 Installation
+
+```bash
+# Just copy the YIYIMail folder into your project.
+import YIYIMail
+```
 
 ## 🚀 Quick Start
 
-### Installation
-```bash
-pip install airmail-python
+### 1. Connection
+YIYIMail automatically identifies server settings based on your email domain.
+
+```python
+import YIYIMail
+
+# Use authorization codes for services like 163, QQ, etc.
+mail = YIYIMail.connect('your_name@163.com', 'your_auth_code')
+
+# Enterprise mail support (Auto-detects Tencent, Ali, Netease)
+# mail = YIYIMail.connect('admin@exmail.qq.com', 'password')
+
+# Or manual server configuration
+# mail = YIYIMail.connect('user@company.com', 'pwd', smtp_host='smtp.company.com', imap_host='imap.company.com')
 ```
 
-### Sending an Email
+### 2. Send Emails
+Supports multiple recipients, attachments, and HTML content.
+
 ```python
-import AirMail
-
-# Connect to your account
-mail = AirMail.connect('your_name@gmail.com', 'your_app_password')
-
-# Send a message
 mail.send(
-    recipients='friend@example.com',
-    subject='Hello from AirMail!',
-    content='This is a plain text message.',
-    html='<h1>Or send HTML</h1>',
-    attachments=['report.pdf']
+    recipients=['friend@example.com'],
+    subject='Hello',
+    content='This is a test email',
+    html='<h1>Hello</h1><p>Sent via YIYIMail!</p>',
+    attachments=['/path/to/report.pdf']
 )
 ```
 
-### Retrieving Emails
-```python
-# Get the most recent email
-latest = mail.fetch_latest()
-print(f"From: {latest['from']}")
-print(f"Subject: {latest['subject']}")
+### 3. Advanced Search (IMAP)
+Search on the server without downloading everything.
 
-# Get a range of emails
-inbox = mail.fetch_mails(start=1, end=5)
+```python
+# Search for emails after May 1st, 2026, limit to 5 latest results
+results = mail.search(after='2026-05-01', subject='Report', limit=5)
+
+# Search for unseen emails from a specific sender
+unread = mail.search(sender='boss@company.com', unseen=True)
+
+# Search in a specific folder
+sent = mail.search(subject='Project', folder='Sent Messages')
 ```
 
-## 🛠️ Comparison with Zmail
+### 4. Fetch & Display
+```python
+# Get the latest email
+latest = mail.fetch_latest()
 
-| Feature | Zmail | **AirMail** |
-| :--- | :--- | :--- |
-| **API Style** | `server.send_mail` | `gateway.send` / `push` |
-| **Code Base** | Legacy Python 2/3 | Python 3.7+ Clean |
-| **Type Hints** | ❌ No | ✅ Yes |
-| **Parsing** | Custom Logic | Standard `EmailMessage` |
-| **Maintenance** | Unmaintained | **Active** |
+# Get a range of emails
+mails = mail.fetch_mails(start=1, end=10)
 
-## 📄 License
-MIT
+# Pretty print content to console
+YIYIMail.show(latest)
+```
+
+### 5. Status Management
+```python
+uid = latest['uid']
+mail.mark_as_read(uid)    # Mark as seen
+mail.mark_as_unread(uid)  # Mark as unseen
+```
+
+### 6. Persistence
+```python
+# Save to local JSON
+YIYIMail.save(latest, 'my_mail.json')
+
+# Load from local
+local_mail = YIYIMail.load('my_mail.json')
+```
+
+### 7. Mailbox Information
+```python
+# Get mailbox statistics (total count, size)
+stats = mail.info()
+print(f"Total Mails: {stats['count']}, Size: {stats['size_bytes']} bytes")
+```
+
+## 🛠️ Folder Management
+Use `mail.folders()` to get decoded folder names from the server.
+
+```python
+print(mail.folders()) 
+# Output: ['INBOX', 'Drafts', 'Sent Messages', 'Trash', ...]
+```
+
+## ⚖️ License
+MIT License

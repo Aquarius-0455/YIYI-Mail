@@ -1,14 +1,14 @@
 from typing import Any, Dict, List, Optional
 
-class AirMailException(Exception):
-    """Base exception for AirMail."""
+class YIYIMailException(Exception):
+    """Base exception for YIYIMail."""
     pass
 
-class AuthenticationError(AirMailException):
+class AuthenticationError(YIYIMailException):
     """Raised when login fails."""
     pass
 
-class ConnectionError(AirMailException):
+class ConnectionError(YIYIMailException):
     """Raised when server connection fails."""
     pass
 

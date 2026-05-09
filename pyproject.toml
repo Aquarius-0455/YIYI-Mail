@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "YIYIMail"
+version = "1.0.1"
+authors = [
+  { name="Aquarius-0455" },
+]
+description = "A high-performance, modern Python library for email processing (IMAP/POP3/SMTP)."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Communications :: Email",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Aquarius-0455/YIYI-Mail"
+"Bug Tracker" = "https://github.com/Aquarius-0455/YIYI-Mail/issues"
+
+[tool.setuptools]
+packages = ["YIYIMail", "YIYIMail.core"]
+package-dir = {"YIYIMail" = ".", "YIYIMail.core" = "core"}
