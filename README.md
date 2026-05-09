@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="YIYIMail_logo.png" alt="YIYIMail Logo" width="200">
+  <img src="https://raw.githubusercontent.com/Aquarius-0455/YIYI-Mail/master/YIYIMail_logo.png" alt="YIYIMail Logo" width="200">
 </p>
 
 # YIYIMail 🚀
